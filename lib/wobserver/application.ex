@@ -5,8 +5,6 @@ defmodule Wobserver.Application do
 
   use Application
 
-  alias Plug.Adapters.Cowboy
-
   alias Wobserver.Page
   alias Wobserver.Util.Metrics
 
@@ -32,22 +30,21 @@ defmodule Wobserver.Application do
   **Note:** both `type` and `args` are unused.
   """
   @spec start(term, term) ::
-    {:ok, pid} |
-    {:ok, pid, state :: any} |
-    {:error, reason :: term}
+          {:ok, pid}
+          | {:ok, pid, state :: any}
+          | {:error, reason :: term}
   def start(_type, _args) do
     # Load pages and metrics from config
-    Page.load_config
-    Metrics.load_config
+    Page.load_config()
+    Metrics.load_config()
 
     # Start cowboy
     case supervisor_children() do
       [] ->
         # Return the metric storage if we're not going to start an application.
         {:ok, Process.whereis(:wobserver_metrics)}
-      children ->
-        import Supervisor.Spec, warn: false
 
+      children ->
         opts = [strategy: :one_for_one, name: Wobserver.Supervisor]
         Supervisor.start_link(children, opts)
     end
@@ -57,8 +54,9 @@ defmodule Wobserver.Application do
     case Application.get_env(:wobserver, :mode, :standalone) do
       :standalone ->
         [
-          cowboy_child_spec(),
+          cowboy_child_spec()
         ]
+
       :plug ->
         []
     end
@@ -66,17 +64,17 @@ defmodule Wobserver.Application do
 
   defp cowboy_child_spec do
     options = [
-      # Options
-      acceptors: 10,
-      port: Wobserver.Application.port,
+      transport_options: [num_acceptors: 10],
+      port: Wobserver.Application.port(),
       dispatch: [
-        {:_, [
-          {"/ws", Wobserver.Web.Client, []},
-          {:_, Cowboy.Handler, {Wobserver.Web.Router, []}}
-        ]}
-      ],
+        {:_,
+         [
+           {"/ws", Wobserver.Web.Client, []},
+           {:_, Plug.Cowboy.Handler, {Wobserver.Web.Router, []}}
+         ]}
+      ]
     ]
 
-    Cowboy.child_spec(:http, Wobserver.Web.Router, [], options)
+    {Plug.Cowboy, scheme: :http, plug: Wobserver.Web.Router, options: options}
   end
 end
