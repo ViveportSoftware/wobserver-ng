@@ -13,7 +13,7 @@ defmodule Wobserver.Web.Router.Static do
 
   alias Wobserver.Assets
 
-  @security Application.get_env(:wobserver, :security, Wobserver.Security)
+  @security Application.compile_env(:wobserver, :security, Wobserver.Security)
 
   get "/" do
     conn = @security.authenticate(conn)
@@ -23,6 +23,7 @@ defmodule Wobserver.Web.Router.Static do
         conn
         |> put_resp_content_type("text/html")
         |> send_asset("assets/index.html", &Assets.html/0)
+
       false ->
         conn
         |> put_resp_header("location", conn.request_path <> "/")
@@ -54,18 +55,20 @@ defmodule Wobserver.Web.Router.Static do
 
   # Helpers
 
-  case Application.get_env(:wobserver, :assets, false) do
+  case Application.compile_env(:wobserver, :assets, false) do
     false ->
       defp send_asset(conn, _asset, fallback) do
         conn
         |> send_resp(200, fallback.())
       end
+
     root ->
       defp send_asset(conn, asset, fallback) do
         case File.exists?(unquote(root) <> asset) do
           true ->
             conn
             |> send_file(200, unquote(root) <> asset)
+
           false ->
             conn
             |> send_resp(200, fallback.())
