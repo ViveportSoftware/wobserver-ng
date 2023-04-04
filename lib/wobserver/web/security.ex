@@ -26,7 +26,7 @@ defmodule Wobserver.Security do
   end
 
   @doc ~S"""
-  Checks whether a given `conn` is authenticated.
+  Checks whether a given `conn` or `req` is authenticated.
   """
   @spec authenticated?(Conn.t()) :: boolean
   def authenticated?(conn = %Conn{}) do
@@ -38,13 +38,10 @@ defmodule Wobserver.Security do
     end
   end
 
-  @doc ~S"""
-  Checks whether a given `req` is authenticated.
-  """
   @spec authenticated?(:cowboy_req.req()) :: boolean
   def authenticated?(req) do
-    {ip, _} = elem(req, 7)
-    headers = elem(req, 16)
+    {ip, _} = req[:peer]
+    headers = req[:headers]
 
     cookies =
       Enum.find_value(headers, "", fn

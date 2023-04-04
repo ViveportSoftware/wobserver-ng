@@ -14,13 +14,13 @@ defmodule Wobserver.Allocator do
   @spec list :: list(map)
   def list do
     :alloc_util_allocators
-    |> :erlang.system_info
+    |> :erlang.system_info()
     |> info()
   end
 
   defp info(type) do
     {:allocator_sizes, type}
-    |> :erlang.system_info
+    |> :erlang.system_info()
     |> Enum.map(&sum_data/1)
     |> Enum.filter(&non_zero?/1)
   end
@@ -29,11 +29,27 @@ defmodule Wobserver.Allocator do
 
   defp sum_data({type, data}) do
     data
-    |> Enum.map(fn {_, _, d} -> Keyword.get(d,:mbcs) end)
+    |> Enum.map(fn {_, _, d} -> Keyword.get(d, :mbcs) end)
     |> Enum.map(&block_and_carrier_size/1)
-    |> Enum.reduce({0,0}, fn {x, y}, {a, b} -> {a + x, y + b} end)
+    |> Enum.reduce({0, 0}, fn {x, y}, {a, b} -> {a + x, y + b} end)
     |> (fn {x, y} -> %{type: type, block: x, carrier: y} end).()
   end
 
-  defp block_and_carrier_size([{_, x, _, _}, {_, y, _, _}]), do: {x, y}
+  defp block_and_carrier_size([
+         {:blocks, [{_, [{:size, x, _, _} | _]} | _]},
+         {:carriers_size, y, _, _}
+       ]) do
+    {x, y}
+  end
+
+  defp block_and_carrier_size([
+         {:blocks, []},
+         {:carriers_size, y, _, _}
+       ]) do
+    {0, y}
+  end
+
+  defp block_and_carrier_size(_) do
+    {0, 0}
+  end
 end
