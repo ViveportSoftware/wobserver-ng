@@ -21,9 +21,9 @@ defmodule Wobserver.Mixfile do
       ],
       dialyzer: [ignore_warnings: "dialyzer.ignore-warnings"],
       # Docs
-      name: "Wobserver",
-      source_url: "https://github.com/shinyscorpion/wobserver",
-      homepage_url: "https://github.com/shinyscorpion/wobserver",
+      name: "Wobserver NG",
+      source_url: "https://github.com/liyu1981/wobserver-ng",
+      homepage_url: "https://github.com/liyu1981/wobserver-ng",
       docs: [
         main: "readme",
         extras: ["README.md"]
@@ -33,8 +33,8 @@ defmodule Wobserver.Mixfile do
 
   def package do
     [
-      name: :wobserver,
-      maintainers: ["Ian Luites"],
+      name: :wobserver_ng,
+      maintainers: ["Yu Li"],
       licenses: ["MIT"],
       files: [
         # Elixir
@@ -45,7 +45,7 @@ defmodule Wobserver.Mixfile do
         "LICENSE*"
       ],
       links: %{
-        "GitHub" => "https://github.com/shinyscorpion/wobserver"
+        "GitHub" => "https://github.com/liyu1981/wobserver-ng"
       }
     ]
   end
