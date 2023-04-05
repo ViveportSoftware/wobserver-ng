@@ -1,23 +1,23 @@
-import {Popup} from './interface/popup.js';
-import {NodeDialog} from './interface/node_dialog.js';
-import {ProcessDetail} from './interface/process_detail.js';
-import {TableDetail} from './interface/table_detail.js';
-import {ApplicationGraph} from './interface/application_graph';
-import {WobserverChart} from './interface/chart';
+import { Popup } from './interface/popup.js';
+import { NodeDialog } from './interface/node_dialog.js';
+import { ProcessDetail } from './interface/process_detail.js';
+import { TableDetail } from './interface/table_detail.js';
+import { ApplicationGraph } from './interface/application_graph';
+import { WobserverChart } from './interface/chart';
 
 // Helpers
 function time_formatter(time) {
   let seconds = Math.floor(time / 1000);
 
-  let days    = Math.floor(seconds / 86400); seconds -= days * 86400;
-  let hours   = Math.floor(seconds / 3600);  seconds -= hours * 3600;
-  let minutes = Math.floor(seconds / 60);    seconds -= minutes * 60;
+  let days = Math.floor(seconds / 86400); seconds -= days * 86400;
+  let hours = Math.floor(seconds / 3600); seconds -= hours * 3600;
+  let minutes = Math.floor(seconds / 60); seconds -= minutes * 60;
 
-  if( hours   < 10 ) {hours   = '0' + hours;}
-  if( minutes < 10 ) {minutes = '0' + minutes;}
-  if( seconds < 10 ) {seconds = '0' + seconds;}
+  if (hours < 10) { hours = '0' + hours; }
+  if (minutes < 10) { minutes = '0' + minutes; }
+  if (seconds < 10) { seconds = '0' + seconds; }
 
-  if( days > 0 ){
+  if (days > 0) {
     return days + 'days, ' + hours + ':' + minutes + ':' + seconds;
   }
 
@@ -27,7 +27,7 @@ function byte_formatter(usage) {
   let unit = ['B', 'kB', 'MB', 'GB'];
   let unit_counter = 0;
 
-  while( unit_counter < unit.length && usage / 1024 > 8 ){
+  while (unit_counter < unit.length && usage / 1024 > 8) {
     usage /= 1024;
     unit_counter++;
   }
@@ -36,7 +36,7 @@ function byte_formatter(usage) {
 }
 
 function memory_formatter(memory) {
-  return Object.keys(memory).reduce( (formatted_memory, type) => {
+  return Object.keys(memory).reduce((formatted_memory, type) => {
     formatted_memory[type] = byte_formatter(memory[type]);
     return formatted_memory;
   }, {});
@@ -44,24 +44,24 @@ function memory_formatter(memory) {
 
 function select_menu(ol, menu_item, item) {
   //ol.querySelectorAll('a').forEach( (child) => child.className = '' );
-  document.querySelectorAll('#menu a').forEach( (child) => child.className = '' );
+  document.querySelectorAll('#menu a').forEach((child) => child.className = '');
   // nav.childNodes.forEach( (child) => child.className = '' );
   menu_item.className = 'selected';
 
-  if( ol.lastItem && ol.lastItem.on_close ){
+  if (ol.lastItem && ol.lastItem.on_close) {
     ol.lastItem.on_close();
   }
 
   item.on_open();
 
   ol.lastItem = item;
-  if( history.pushState ) {
+  if (history.pushState) {
     history.pushState(null, null, '#' + item.title.replace(' ', ''));
   } else {
     location.hash = '#' + item.title.replace(' ', '');
   }
 }
-function build_menu(items, ol){
+function build_menu(items, ol) {
   return items.map((item) => {
     let menu_item = document.createElement('li');
     let menu_link = document.createElement('a');
@@ -72,7 +72,7 @@ function build_menu(items, ol){
     menu_link.innerHTML = `<i class="menuIcon fa fa-fw ${icon}"></i><span>${item.title}</span>`;
 
 
-    if( item.children ){
+    if (item.children) {
       let child_ol = document.createElement('ol');
       child_ol.className = 'smallDropDown';
 
@@ -93,78 +93,78 @@ function build_menu(items, ol){
     return item;
   });
 }
-function create_menu(wobserver, additional = []){
+function create_menu(wobserver, additional = []) {
   let items = [
-      {
-        title: 'System',
-        icon: 'fa-heartbeat',
-        on_open: () => wobserver.open('system', 1, WobserverRender.display_system),
-        on_close: () => wobserver.close('system', 1)
-      },
-      {
-        title: 'Load Charts',
-        icon: 'fa-area-chart',
-        on_open: () => wobserver.open('system', 0.25, WobserverRender.display_load_charts),
-        on_close: () => wobserver.close('system', 0.25)
-      },
-      {
-        title: 'Memory Allocators',
-        icon: 'fa-microchip',
-        on_open: () => wobserver.open('allocators', 0.25, WobserverRender.display_allocators),
-        on_close: () => wobserver.close('allocators', 0.25)
-      },
-      {
-        title: 'Applications',
-        icon: 'fa-desktop',
-        on_open: () => wobserver.open('application', 0, e => WobserverRender.display_applications(e, wobserver)),
-      },
-      {
-        title: 'Processes',
-        icon: 'fa-list-alt',
-        on_open: () => wobserver.open('process', 4, WobserverRender.display_processes),
-        on_close: () => wobserver.close('process', 4)
-      },
-      {
-        title: 'Ports',
-        icon: 'fa-usb',
-        on_open: () => wobserver.open('ports', 8, WobserverRender.display_ports),
-        on_close: () => wobserver.close('ports', 8)
-      },
-      {
-        title: 'Table Viewer',
-        icon: 'fa-table',
-        on_open: () => wobserver.open('table', 0, WobserverRender.display_table),
-        on_close: () => wobserver.close('table', 0)
-      }
+    {
+      title: 'System',
+      icon: 'fa-heartbeat',
+      on_open: () => wobserver.open('system', 1, WobserverRender.display_system),
+      on_close: () => wobserver.close('system', 1)
+    },
+    {
+      title: 'Load Charts',
+      icon: 'fa-area-chart',
+      on_open: () => wobserver.open('system', 0.25, WobserverRender.display_load_charts),
+      on_close: () => wobserver.close('system', 0.25)
+    },
+    {
+      title: 'Memory Allocators',
+      icon: 'fa-microchip',
+      on_open: () => wobserver.open('allocators', 0.25, WobserverRender.display_allocators),
+      on_close: () => wobserver.close('allocators', 0.25)
+    },
+    {
+      title: 'Applications',
+      icon: 'fa-desktop',
+      on_open: () => wobserver.open('application', 0, e => WobserverRender.display_applications(e, wobserver)),
+    },
+    {
+      title: 'Processes',
+      icon: 'fa-list-alt',
+      on_open: () => wobserver.open('process', 4, WobserverRender.display_processes),
+      on_close: () => wobserver.close('process', 4)
+    },
+    {
+      title: 'Ports',
+      icon: 'fa-usb',
+      on_open: () => wobserver.open('ports', 8, WobserverRender.display_ports),
+      on_close: () => wobserver.close('ports', 8)
+    },
+    {
+      title: 'Table Viewer',
+      icon: 'fa-table',
+      on_open: () => wobserver.open('table', 0, WobserverRender.display_table),
+      on_close: () => wobserver.close('table', 0)
+    }
   ];
 
-  if( additional.length == 1 ){
+  if (additional.length == 1) {
     items.push(additional[0]);
-  } else if( additional.length > 1 ){
+  } else if (additional.length > 1) {
     items.push({
       title: 'Plugins',
       icon: 'fa-bolt',
-      on_open: () => {},
+      on_open: () => { },
       children: additional
     });
   }
 
   items.push(
-  {
-    title: 'About',
-    icon: 'fa-info',
-    on_open: () => wobserver.open('about', 0, WobserverRender.display_about),
-  });
+    {
+      title: 'About',
+      icon: 'fa-info',
+      on_open: () => wobserver.open('about', 0, WobserverRender.display_about),
+    });
 
   let menu = document.getElementById('menu');
   let ol = menu.querySelector('ol');
   let header = document.createElement('header');
-    menu.appendChild(header);
-    header.innerHTML = '<i class="elixir-icon"></i> Wobserver';
+  menu.appendChild(header);
+  header.innerHTML = '<i class="elixir-icon"></i> Wobserver NG';
 
-  if( ol ){
+  if (ol) {
     while (ol.hasChildNodes()) {
-        ol.removeChild(ol.lastChild);
+      ol.removeChild(ol.lastChild);
     }
   } else {
     ol = document.createElement('ol');
@@ -180,28 +180,28 @@ function create_menu(wobserver, additional = []){
   setTimeout(() => {
     let select = items.find(item => '#' + item.title.replace(' ', '') == window.location.hash);
 
-    if( !select ){
+    if (!select) {
       select = items[0];
     }
 
     select_menu(ol, select.menu_item, select);
   }, 100);
 
-  if( !menu.querySelector('.menu-footer') ){
-      let footer = document.createElement('div');
-      footer.className = 'menu-footer';
+  if (!menu.querySelector('.menu-footer')) {
+    let footer = document.createElement('div');
+    footer.className = 'menu-footer';
 
-      let switch_button = document.createElement('span');
-      switch_button.className = 'button-primary';
-      switch_button.style.marginRight = "1em";
-      switch_button.innerHTML = '<i class="fa fa-plug" aria-hidden="true"></i><span> Switch Node</span>';
+    let switch_button = document.createElement('span');
+    switch_button.className = 'button-primary';
+    switch_button.style.marginRight = "1em";
+    switch_button.innerHTML = '<i class="fa fa-plug" aria-hidden="true"></i><span> Switch Node</span>';
 
-      let node_selection = new NodeDialog(wobserver);
+    let node_selection = new NodeDialog(wobserver);
 
-      switch_button.addEventListener('click', () => node_selection.show() );
+    switch_button.addEventListener('click', () => node_selection.show());
 
-      footer.appendChild(switch_button);
-      menu.appendChild(footer);
+    footer.appendChild(switch_button);
+    menu.appendChild(footer);
   }
 }
 
@@ -215,7 +215,7 @@ function create_footer(wobserver) {
 
   let node_selection = new NodeDialog(wobserver);
 
-  switch_button.addEventListener('click', () => node_selection.show() );
+  switch_button.addEventListener('click', () => node_selection.show());
 
   footer.appendChild(switch_button);
 
@@ -228,24 +228,24 @@ function create_footer(wobserver) {
 
 function show_application_graph(app_name, description, wobserver) {
   wobserver.client.command_promise('application/' + app_name)
-  .then(e => {
-    let application = e.data;
+    .then(e => {
+      let application = e.data;
 
-    if( app_name != description ) {
-      document.getElementById('application_app_description').innerHTML = description;
-    } else {
-      document.getElementById('application_app_description').innerHTML = '';
-    }
+      if (app_name != description) {
+        document.getElementById('application_app_description').innerHTML = description;
+      } else {
+        document.getElementById('application_app_description').innerHTML = '';
+      }
 
-    ApplicationGraph.show(application, 'application_chart');
+      ApplicationGraph.show(application, 'application_chart');
 
-    document.querySelectorAll('.process-node').forEach( node => {
-      let node_name = node.getElementsByClassName('node-name')[0].innerText;
-      node.addEventListener('click', _ => {
-        new ProcessDetail(node_name, wobserver).show();
+      document.querySelectorAll('.process-node').forEach(node => {
+        let node_name = node.getElementsByClassName('node-name')[0].innerText;
+        node.addEventListener('click', _ => {
+          new ProcessDetail(node_name, wobserver).show();
+        });
       });
     });
-  });
 }
 
 let menu_state = 0;
@@ -262,7 +262,7 @@ const WobserverRender = {
 
       create_footer(wobserver);
 
-      if( menu_state == 1 ){
+      if (menu_state == 1) {
         WobserverRender.load_menu(wobserver);
       }
 
@@ -270,31 +270,31 @@ const WobserverRender = {
     }
   },
   load_menu: (wobserver) => {
-    if( menu_state == 0 ){
+    if (menu_state == 0) {
       menu_state = 1;
       return;
     }
 
     wobserver.client.command_promise('custom')
-    .then(e => {
-      create_menu(wobserver,
-        e.data
-        .filter(custom => !e.api_only)
-        .map(custom => {
-          return {
-            title: custom.title,
-            on_open: () => wobserver.open(custom.command, custom.refresh, WobserverRender.show_custom),
-            on_close: () => wobserver.close(custom.command, custom.refresh)
-          }
-        })
-      );
-    })
-    .catch(_ => create_menu(wobserver));
+      .then(e => {
+        create_menu(wobserver,
+          e.data
+            .filter(custom => !e.api_only)
+            .map(custom => {
+              return {
+                title: custom.title,
+                on_open: () => wobserver.open(custom.command, custom.refresh, WobserverRender.show_custom),
+                on_close: () => wobserver.close(custom.command, custom.refresh)
+              }
+            })
+        );
+      })
+      .catch(_ => create_menu(wobserver));
   },
   set_node: (node) => {
     let label = document.getElementById('connected_node');
 
-    if( label ) {
+    if (label) {
       label.innerHTML = node;
     } else {
       setTimeout(() => WobserverRender.set_node(node), 100);
@@ -320,7 +320,7 @@ const WobserverRender = {
 
     //let scheduler_average = (100*system.scheduler.reduce((sum, e) => sum + e, 0) / (system.scheduler.length || 1));
     //let scheduler_average = system.scheduler.map(e=>Math.floor(e*100)+'%').join(',');
-    let scheduler_average = system.scheduler.map(e=> (e>=0.9 ? '<span class="load high">' : '<span class="load">') + Math.floor(e*100)+'</span>%').join(' ');
+    let scheduler_average = system.scheduler.map(e => (e >= 0.9 ? '<span class="load high">' : '<span class="load">') + Math.floor(e * 100) + '</span>%').join(' ');
 
     let cpu =
       `<table class="inline">
@@ -362,7 +362,7 @@ const WobserverRender = {
   },
   display_applications: (e, wobserver) => {
     let applications = e.data;
-    applications.sort(function(a,b){return a.name.localeCompare(b.name);});
+    applications.sort(function (a, b) { return a.name.localeCompare(b.name); });
     let content = document.getElementById('content');
 
     let app_list = `<div id="applications_header">
@@ -378,7 +378,7 @@ const WobserverRender = {
     let list = document.getElementById('applications_app_list');
     let application_descriptions = {};
 
-    applications.forEach((app) =>{
+    applications.forEach((app) => {
       let li = document.createElement('option');
 
       li.value = app.name;
@@ -401,17 +401,18 @@ const WobserverRender = {
     let sorted = -1;
     let reverse = false;
 
-    if( table ) {
-      table.querySelectorAll('th').forEach( (e, i) => {
-      if(e.className.includes('sorttable_sorted_reverse')){
-        sorted = i;
-        reverse = true;
-      }else if(e.className.includes('sorttable_sorted')){
-        sorted = i;
-      }})
+    if (table) {
+      table.querySelectorAll('th').forEach((e, i) => {
+        if (e.className.includes('sorttable_sorted_reverse')) {
+          sorted = i;
+          reverse = true;
+        } else if (e.className.includes('sorttable_sorted')) {
+          sorted = i;
+        }
+      })
     }
 
-    let formatted_processes = processes.map( process => {
+    let formatted_processes = processes.map(process => {
       let init = process.init.startsWith("Elixir.") ? process.init.substr(7) : process.init;
 
       return `<tr>
@@ -441,10 +442,10 @@ const WobserverRender = {
     table = content.querySelector('table');
     sorttable.makeSortable(table);
 
-    if( sorted >= 0 ){
+    if (sorted >= 0) {
       let th = table.getElementsByTagName('th')[sorted];
       sorttable.innerSortFunction.apply(th, []);
-      if( reverse ) {
+      if (reverse) {
         sorttable.innerSortFunction.apply(th, []);
       }
     }
@@ -456,17 +457,18 @@ const WobserverRender = {
     let sorted = -1;
     let reverse = false;
 
-    if( table ) {
-      table.querySelectorAll('th').forEach( (e, i) => {
-      if(e.className.includes('sorttable_sorted_reverse')){
-        sorted = i;
-        reverse = true;
-      }else if(e.className.includes('sorttable_sorted')){
-        sorted = i;
-      }})
+    if (table) {
+      table.querySelectorAll('th').forEach((e, i) => {
+        if (e.className.includes('sorttable_sorted_reverse')) {
+          sorted = i;
+          reverse = true;
+        } else if (e.className.includes('sorttable_sorted')) {
+          sorted = i;
+        }
+      })
     }
 
-    let formatted_ports = data.map( port => {
+    let formatted_ports = data.map(port => {
       let links = port.links.map(link => `<a href="javascript:window.show_process('${link}')">${link}</a>`).join('');
       return `<tr>
         <td>${port.id}</td>
@@ -495,10 +497,10 @@ const WobserverRender = {
     table = content.querySelector('table');
     sorttable.makeSortable(table);
 
-    if( sorted >= 0 ){
+    if (sorted >= 0) {
       let th = table.getElementsByTagName('th')[sorted];
       sorttable.innerSortFunction.apply(th, []);
-      if( reverse ) {
+      if (reverse) {
         sorttable.innerSortFunction.apply(th, []);
       }
     }
@@ -510,7 +512,7 @@ const WobserverRender = {
     let mem_chart = null;
     let io_chart = null;
 
-    if( document.getElementById('memory_chart') ){
+    if (document.getElementById('memory_chart')) {
       scheduler_chart = document.getElementById('scheduler_chart').chart;
       mem_chart = document.getElementById('memory_chart').chart;
       io_chart = document.getElementById('io_chart').chart;
@@ -520,9 +522,9 @@ const WobserverRender = {
       let r_set = [1, 0, 0, 1, 0, 1, 1, 0];
       let g_set = [0, 1, 0, 1, 1, 0, 1, 0];
       let b_set = [0, 0, 1, 0, 1, 1, 1, 0];
-      let schedulers_setup = system.scheduler.map( (_,i) => {
+      let schedulers_setup = system.scheduler.map((_, i) => {
         return {
-          label: 'S' + (i+1),
+          label: 'S' + (i + 1),
           r: r_set[i % 8] == 1 ? 255 : 0,
           g: g_set[i % 8] == 1 ? 255 : 0,
           b: b_set[i % 8] == 1 ? 255 : 0,
@@ -586,7 +588,7 @@ const WobserverRender = {
       ], 'MB');
     }
 
-    let data = system.scheduler.map( v => Math.floor(10000 * v) / 100);
+    let data = system.scheduler.map(v => Math.floor(10000 * v) / 100);
     data.timestamp = e.timestamp;
 
     scheduler_chart.update(data);
@@ -599,7 +601,7 @@ const WobserverRender = {
       system.memory.binary,
       system.memory.code,
       system.memory.ets,
-    ].map( v => Math.floor(v / 1048576))
+    ].map(v => Math.floor(v / 1048576))
     data.timestamp = e.timestamp;
 
     mem_chart.update(data);
@@ -607,7 +609,7 @@ const WobserverRender = {
     data = [
       system.statistics.input,
       system.statistics.output,
-    ].map( v => Math.floor(v / 1048576))
+    ].map(v => Math.floor(v / 1048576))
     data.timestamp = e.timestamp;
 
     io_chart.update(data);
@@ -619,14 +621,14 @@ const WobserverRender = {
     let size_chart = null;
     let util_chart = null;
 
-    allocators.unshift(allocators.reduce((a, v) =>{
+    allocators.unshift(allocators.reduce((a, v) => {
       a.carrier += v.carrier;
       a.block += v.block;
 
       return a;
-    }, {type: 'Total', carrier: 0, block: 0}));
+    }, { type: 'Total', carrier: 0, block: 0 }));
 
-    if( document.getElementById('size_chart') ){
+    if (document.getElementById('size_chart')) {
       size_chart = document.getElementById('size_chart').chart;
       util_chart = document.getElementById('util_chart').chart;
     } else {
@@ -635,7 +637,7 @@ const WobserverRender = {
       let r_set = [1, 0, 0, 1, 0, 1, 1, 0];
       let g_set = [0, 1, 0, 1, 1, 0, 1, 0];
       let b_set = [0, 0, 1, 0, 1, 1, 1, 0];
-      let schedulers_setup = allocators.map( (data, i) => {
+      let schedulers_setup = allocators.map((data, i) => {
         return {
           label: data.type,
           r: r_set[i % 8] == 1 ? 255 : 0,
@@ -648,12 +650,12 @@ const WobserverRender = {
       util_chart = new WobserverChart('util_chart', schedulers_setup, 'MB');
     }
 
-    let data = allocators.map( v => Math.floor(v.block * 100 / v.carrier))
+    let data = allocators.map(v => Math.floor(v.block * 100 / v.carrier))
     data.timestamp = e.timestamp;
 
     size_chart.update(data);
 
-    data = allocators.map( v => Math.floor(v.carrier / 1048576))
+    data = allocators.map(v => Math.floor(v.carrier / 1048576))
     data.timestamp = e.timestamp;
     util_chart.update(data);
 
@@ -679,17 +681,18 @@ const WobserverRender = {
     let sorted = -1;
     let reverse = false;
 
-    if( table ) {
-      table.querySelectorAll('th').forEach( (e, i) => {
-      if(e.className.includes('sorttable_sorted_reverse')){
-        sorted = i;
-        reverse = true;
-      }else if(e.className.includes('sorttable_sorted')){
-        sorted = i;
-      }})
+    if (table) {
+      table.querySelectorAll('th').forEach((e, i) => {
+        if (e.className.includes('sorttable_sorted_reverse')) {
+          sorted = i;
+          reverse = true;
+        } else if (e.className.includes('sorttable_sorted')) {
+          sorted = i;
+        }
+      })
     }
 
-    let formatted_tables = data.map( t => {
+    let formatted_tables = data.map(t => {
       let id = !isNaN(parseFloat(t.id)) && isFinite(t.id) ? t.id : '';
       return `<tr>
         <td><a href="javascript:window.show_table('${t.id}')">${t.name.replace(/^Elixir\./, '')}</a></td>
@@ -718,10 +721,10 @@ const WobserverRender = {
     table = content.querySelector('table');
     sorttable.makeSortable(table);
 
-    if( sorted >= 0 ){
+    if (sorted >= 0) {
       let th = table.getElementsByTagName('th')[sorted];
       sorttable.innerSortFunction.apply(th, []);
-      if( reverse ) {
+      if (reverse) {
         sorttable.innerSortFunction.apply(th, []);
       }
     }
@@ -730,7 +733,7 @@ const WobserverRender = {
     let about = e.data;
     let content = document.getElementById('content');
 
-    let urls = about.links.map( (url) => {
+    let urls = about.links.map((url) => {
       return `<tr><th>${url.name}</th><td><a href="${url.url}">${url.url}</a></td></tr>`
     }).join('');
 
@@ -752,7 +755,7 @@ const WobserverRender = {
     new TableDetail(table, wobserver).show();
   },
   disconnect_popup: (show) => {
-    if( show ){
+    if (show) {
       Popup.show(`
         <div id="table_information">
           <span>Connection lost.</span>
@@ -769,7 +772,7 @@ const WobserverRender = {
   loading: loading => {
     let content = document.getElementById('content');
 
-    if( loading ){
+    if (loading) {
       content.style.opacity = 0;
     } else {
       content.style.opacity = 1;
@@ -777,8 +780,8 @@ const WobserverRender = {
   }
 };
 
-function show_custom_data(data, name = ''){
-  if(data instanceof Array){
+function show_custom_data(data, name = '') {
+  if (data instanceof Array) {
     return show_custom_array_table(data, name)
   } else {
     return show_custom_table(data, name);
@@ -786,26 +789,26 @@ function show_custom_data(data, name = ''){
 }
 
 function show_custom_array_table(data, name = '') {
-  if( data.length <= 0 ){
+  if (data.length <= 0) {
     return '';
   }
 
   let header =
     Object
-    .keys(data[0])
-    .map(key => `<th>${key}</th>`)
-    .join('')
+      .keys(data[0])
+      .map(key => `<th>${key}</th>`)
+      .join('')
 
   let rows =
     data
-    .map(row =>
-      Object
-      .keys(row)
-      .map(key => `<td>${row[key]}</td>`)
-      .join('')
-    )
-    .map(row => `<tr>${row}</tr>`)
-    .join('');
+      .map(row =>
+        Object
+          .keys(row)
+          .map(key => `<td>${row[key]}</td>`)
+          .join('')
+      )
+      .map(row => `<tr>${row}</tr>`)
+      .join('');
 
 
   return `
@@ -822,16 +825,16 @@ function show_custom_array_table(data, name = '') {
 function show_custom_table(data, name = '') {
   let raw_table =
     !Object
-    .keys(data)
-    .map(key => data[key] instanceof Object)
-    .reduce((a, b) => a || b);
+      .keys(data)
+      .map(key => data[key] instanceof Object)
+      .reduce((a, b) => a || b);
 
-  if( raw_table ){
+  if (raw_table) {
     let rows =
       Object
-      .keys(data)
-      .map(key => `<tr><th>${key}</th><td>${data[key]}</td></tr>`)
-      .join('');
+        .keys(data)
+        .map(key => `<tr><th>${key}</th><td>${data[key]}</td></tr>`)
+        .join('');
 
     return `
       <div class="table-holder"><table class="inline">
@@ -842,9 +845,9 @@ function show_custom_table(data, name = '') {
   } else {
     let tables =
       Object
-      .keys(data)
-      .map(key => show_custom_data(data[key], key))
-      .join('');
+        .keys(data)
+        .map(key => show_custom_data(data[key], key))
+        .join('');
 
     return `
       <div>
@@ -855,4 +858,4 @@ function show_custom_table(data, name = '') {
   }
 }
 
-export{ WobserverRender }
+export { WobserverRender }

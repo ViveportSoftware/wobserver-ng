@@ -1,5 +1,10 @@
 # Change log
 
+## 1.14.0
+
+* Forked from Wobserver and republish as WobserverNG, will not update this file 
+  as relying on github history.
+
 ## 0.1.8
 
 
