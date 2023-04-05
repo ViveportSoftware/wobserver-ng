@@ -12,7 +12,7 @@ defmodule Wobserver.Table do
   """
   @spec list :: list(map)
   def list do
-    :ets.all
+    :ets.all()
     |> Enum.map(&info/1)
   end
 
@@ -21,23 +21,23 @@ defmodule Wobserver.Table do
 
   If `include_data` is set to `true`, it will also contain the table data.
   """
-  @spec info(table :: atom | integer, include_data :: boolean) :: map
+  @spec info(table :: :ets.table(), include_data :: boolean) :: map
   def info(table, include_data \\ false)
 
   def info(table, false) do
     %{
       id: table,
-      name: :ets.info(table, :name),
-      type: :ets.info(table, :type),
+      name: :ets.info(table, :name) |> otherwise(:code),
+      type: :ets.info(table, :type) |> otherwise(:set),
       size: :ets.info(table, :size),
       memory: :ets.info(table, :memory),
       owner: :ets.info(table, :owner),
-      protection: :ets.info(table, :protection),
+      protection: :ets.info(table, :protection) |> otherwise(:private),
       meta: %{
-        read_concurrency: :ets.info(table, :read_concurrency),
-        write_concurrency: :ets.info(table, :write_concurrency),
-        compressed: :ets.info(table, :compressed),
-      },
+        read_concurrency: :ets.info(table, :read_concurrency) |> otherwise(false),
+        write_concurrency: :ets.info(table, :write_concurrency) |> otherwise(false),
+        compressed: :ets.info(table, :compressed) |> otherwise(false)
+      }
     }
   end
 
@@ -68,9 +68,10 @@ defmodule Wobserver.Table do
   1
   ```
   """
-  @spec sanitize(table :: atom | integer | String.t) :: atom | integer
+  @spec sanitize(table :: atom | integer | String.t()) :: atom | integer
   def sanitize(table) when is_atom(table), do: table
   def sanitize(table) when is_integer(table), do: table
+
   def sanitize(table) when is_binary(table) do
     case Integer.parse(table) do
       {nr, ""} -> nr
@@ -80,10 +81,21 @@ defmodule Wobserver.Table do
 
   # Helpers
 
+  defp otherwise(value1, value2) do
+    case value1 do
+      :undefined -> value2
+      _ -> value1
+    end
+  end
+
   defp data(table) do
     case :ets.info(table, :protection) do
+      :undefined ->
+        []
+
       :private ->
         []
+
       _ ->
         table
         |> :ets.match(:"$1")
@@ -93,7 +105,7 @@ defmodule Wobserver.Table do
 
   defp data_row([row]) do
     row
-    |> Tuple.to_list
-    |> Enum.map(&(to_string(:io_lib.format("~tp", [&1]))))
+    |> Tuple.to_list()
+    |> Enum.map(&to_string(:io_lib.format("~tp", [&1])))
   end
 end
