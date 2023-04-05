@@ -1,4 +1,4 @@
-defmodule Wobserver.Application do
+defmodule WobserverNG.Application do
   @moduledoc ~S"""
   Sets up the main routers with Cowboy.
   """
@@ -65,7 +65,7 @@ defmodule Wobserver.Application do
   defp cowboy_child_spec do
     options = [
       transport_options: [num_acceptors: 10],
-      port: Wobserver.Application.port(),
+      port: WobserverNG.Application.port(),
       dispatch: [
         {:_,
          [

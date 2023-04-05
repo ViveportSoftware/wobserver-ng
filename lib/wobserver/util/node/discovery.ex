@@ -161,7 +161,7 @@ defmodule Wobserver.Util.Node.Discovery do
       %Remote{
         name: get_local_ip(),
         host: get_local_ip(),
-        port: Wobserver.Application.port(),
+        port: WobserverNG.Application.port(),
         local?: true
       }
     ]
@@ -182,10 +182,10 @@ defmodule Wobserver.Util.Node.Discovery do
   defp local?(%{name: "local"}), do: true
 
   defp local?(%{host: "127.0.0.1", port: port}),
-    do: port == Wobserver.Application.port()
+    do: port == WobserverNG.Application.port()
 
   defp local?(%{host: ip, port: port}),
-    do: ip == get_local_ip() && port == Wobserver.Application.port()
+    do: ip == get_local_ip() && port == WobserverNG.Application.port()
 
   defp local?(_), do: false
 
@@ -197,7 +197,7 @@ defmodule Wobserver.Util.Node.Discovery do
     remote = %Remote{
       name: remote_ip,
       host: remote_ip,
-      port: Wobserver.Application.port(),
+      port: WobserverNG.Application.port(),
       local?: false
     }
 

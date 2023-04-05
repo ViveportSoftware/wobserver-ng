@@ -3,7 +3,7 @@ defmodule Wobserver.Mixfile do
 
   def project do
     [
-      app: :wobserver,
+      app: :wobserver_ng,
       version: "1.14.0",
       elixir: "~> 1.14",
       description: "Web based metrics, monitoring, and observer.",
@@ -39,6 +39,7 @@ defmodule Wobserver.Mixfile do
       files: [
         # Elixir
         "lib/wobserver",
+        "lib/wobserver_ng",
         "lib/wobserver.ex",
         "mix.exs",
         "README*",
@@ -60,7 +61,7 @@ defmodule Wobserver.Mixfile do
         :logger,
         :httpoison
       ],
-      mod: {Wobserver.Application, []}
+      mod: {WobserverNG.Application, []}
     ]
   end
 

@@ -2,5 +2,5 @@
 # and its dependencies with the aid of the Mix.Config module.
 import Config
 
-config :wobserver,
+config :wobserver_ng,
   assets: ""
