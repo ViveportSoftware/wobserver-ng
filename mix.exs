@@ -26,7 +26,7 @@ defmodule Wobserver.Mixfile do
       homepage_url: "https://github.com/liyu1981/wobserver-ng",
       docs: [
         main: "readme",
-        extras: ["README.md"]
+        extras: ["README.md", "README.orig.md"]
       ]
     ]
   end
