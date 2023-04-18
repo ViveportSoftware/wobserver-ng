@@ -1,5 +1,7 @@
 # Wobserver NG
 
+[![CI](https://github.com/liyu1981/wobserver-ng/actions/workflows/elixir.yml/badge.svg)](https://github.com/liyu1981/wobserver-ng/actions/workflows/elixir.yml)
+
 This repo is an effort of keeping the original [wobserver](https://github.com/shinyscorpion/wobserver) updated with latest version of Elixir.
 
 Original [wobserver](https://github.com/shinyscorpion/wobserver) is a wonderful project making remotely inspecting Elixir developing easy, but it has stopped updating itself after 2017. Both Elixir the language and Erlang OTP platform have changed a lot, so need some effort to change it and make it work again. This repo is targeting of doing that.
