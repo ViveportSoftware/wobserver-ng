@@ -3,4 +3,5 @@
 import Config
 
 config :wobserver_ng,
+  enabled: true,
   assets: ""

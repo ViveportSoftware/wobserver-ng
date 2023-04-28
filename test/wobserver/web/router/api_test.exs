@@ -129,7 +129,7 @@ defmodule Wobserver.Web.Router.ApiTest do
   test "/remote/system returns 500 (can't load)" do
     :meck.new(Application, [:passthrough])
 
-    :meck.expect(Application, :get_env, fn :wobserver, field, _ ->
+    :meck.expect(Application, :get_env, fn :wobserver_ng, field, _ ->
       case field do
         :port ->
           4001
@@ -139,6 +139,9 @@ defmodule Wobserver.Web.Router.ApiTest do
 
         :discovery_search ->
           fn -> [%Wobserver.Util.Node.Remote{name: "remote", host: "85.65.12.4", port: 0}] end
+
+        :enabled ->
+          true
       end
     end)
 
@@ -155,7 +158,7 @@ defmodule Wobserver.Web.Router.ApiTest do
   test "/remote/system returns 200" do
     :meck.new(Application, [:passthrough])
 
-    :meck.expect(Application, :get_env, fn :wobserver, field, _ ->
+    :meck.expect(Application, :get_env, fn :wobserver_ng, field, _ ->
       case field do
         :port ->
           4001

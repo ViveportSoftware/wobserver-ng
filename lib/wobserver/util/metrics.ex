@@ -118,12 +118,12 @@ defmodule Wobserver.Util.Metrics do
     ensure_storage()
 
     metrics =
-      :wobserver
+      :wobserver_ng
       |> Application.get_env(:metrics, [])
       |> Keyword.get(:additional, [])
 
     generators =
-      :wobserver
+      :wobserver_ng
       |> Application.get_env(:metrics, [])
       |> Keyword.get(:generators, [])
 

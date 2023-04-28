@@ -8,12 +8,14 @@ defmodule WobserverNG.Application do
   alias Wobserver.Page
   alias Wobserver.Util.Metrics
 
+  require Logger
+
   @doc ~S"""
   The port the application uses.
   """
   @spec port :: integer
   def port do
-    Application.get_env(:wobserver, :port, 4001)
+    Application.get_env(:wobserver_ng, :port, 4001)
   end
 
   @doc ~S"""
@@ -33,7 +35,22 @@ defmodule WobserverNG.Application do
           {:ok, pid}
           | {:ok, pid, state :: any}
           | {:error, reason :: term}
-  def start(_type, _args) do
+  def start(type, args) do
+    case should_start() do
+      true ->
+        start_myself(type, args)
+
+      _ ->
+        {:error,
+         "Exit as config not set to true. Check config :wobserver_ng :enabled in your config.exs."}
+    end
+  end
+
+  defp should_start() do
+    Application.get_env(:wobserver_ng, :enabled, true)
+  end
+
+  defp start_myself(_type, _args) do
     # Load pages and metrics from config
     Page.load_config()
     Metrics.load_config()
@@ -51,7 +68,7 @@ defmodule WobserverNG.Application do
   end
 
   defp supervisor_children do
-    case Application.get_env(:wobserver, :mode, :standalone) do
+    case Application.get_env(:wobserver_ng, :mode, :standalone) do
       :standalone ->
         [
           cowboy_child_spec()

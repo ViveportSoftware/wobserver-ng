@@ -123,7 +123,7 @@ defmodule Wobserver.Util.Node.Discovery do
   @spec discover :: list(Remote.t())
   def discover do
     nodes =
-      :wobserver
+      :wobserver_ng
       |> Application.get_env(:discovery, :none)
       |> discovery_call
 
@@ -135,11 +135,11 @@ defmodule Wobserver.Util.Node.Discovery do
 
   @spec discovery_call(:dns) :: list(Remote.t())
   defp discovery_call(:dns),
-    do: dns_discover(Application.get_env(:wobserver, :discovery_search, nil))
+    do: dns_discover(Application.get_env(:wobserver_ng, :discovery_search, nil))
 
   @spec discovery_call(:custom) :: list(Remote.t())
   defp discovery_call(:custom) do
-    method = Application.get_env(:wobserver, :discovery_search, fn -> [] end)
+    method = Application.get_env(:wobserver_ng, :discovery_search, fn -> [] end)
 
     cond do
       is_binary(method) ->
